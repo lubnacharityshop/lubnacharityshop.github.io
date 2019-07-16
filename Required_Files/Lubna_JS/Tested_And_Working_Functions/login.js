@@ -1,4 +1,5 @@
-//var x = login(1000011,"674nd");
+var x = login(1000011,"674nd");
+console.log(x);
 //var x = login(1000012,"97473n");
 //var x = login(1000013,"028n84");
 //var x = login(1000014,"i4y3j");
@@ -54,7 +55,8 @@ function login(Employee_id,Entered_Password)
 					" BEGIN"+
 					" INSERT INTO transactions.login_table (Login_id,Employee_id,Login_Time)" +
 					" VALUES ((SELECT max(Login_id)+1 FROM transactions.login_table),@Employee_id,getdate());" +
-					" END;", 
+					" END;" +
+					"SELECT Employee_id FROM sources.employee WHERE Employee_id = @Employee_id AND Login_Password = @Entered_Password;", 
 					function (err, rowCount) {
 					if (err)
 						console.error(err);
@@ -68,7 +70,11 @@ function login(Employee_id,Entered_Password)
 				request.addParameter('Entered_Password', TYPES.VarChar, Entered_Password);
 
 				request.on('row', function (columns) {
-					console.log('value: ' + columns[0].value);
+					if (columns[0].value == Employee_id)
+					{
+						console.log(columns[0].value);
+						return 10;
+					}
 				});
 
 				connection.execSql(request);
